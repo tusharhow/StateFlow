@@ -5,12 +5,32 @@ class StateValue<T> {
   T _value;
   Object? _error;
   bool _isLoading = false;
+  T? _memoizedValue;
+  bool _isMemoizedValueValid = false;
 
-  StateValue(this.key, T initialValue) : _value = initialValue {
+  StateValue._(this.key, T initialValue) : _value = initialValue {
     StateFlow().set(key, this);
   }
 
-  T get value => _value;
+  factory StateValue(String key, T initialValue) {
+    throw UnsupportedError(
+        'Direct instantiation of StateValue is not allowed.\n'
+        'Please use the take<T>() function to create StateValue instances.\n'
+        'Example usage:\n'
+        '  final myIntState = take<int>(0);\n'
+        '  final myStringState = take<String>("");\n'
+        '  final myCustomObjectState = take<MyCustomObject>(MyCustomObject());\n'
+        'For more information, contact the library maintainer.');
+  }
+
+  T get value {
+    if (!_isMemoizedValueValid) {
+      _memoizedValue = _value;
+      _isMemoizedValueValid = true;
+    }
+    return _memoizedValue as T;
+  }
+
   Object? get error => _error;
   bool get isLoading => _isLoading;
 
@@ -19,6 +39,7 @@ class StateValue<T> {
       _value = newValue;
       _error = null;
       _isLoading = false;
+      _isMemoizedValueValid = false;
       StateFlow().notifyListeners(key);
     }
   }
@@ -57,6 +78,6 @@ class StateValue<T> {
 }
 
 StateValue<T> take<T>(T initialValue) {
-  return StateValue<T>(
+  return StateValue._(
       'state_${DateTime.now().millisecondsSinceEpoch}', initialValue);
 }

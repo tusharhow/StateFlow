@@ -21,7 +21,7 @@ class AnimationController extends Animation<double>
     _internalSetValue(value ?? lowerBound);
   }
 
-  late Ticker _ticker;  // Changed from 'late final' to 'late'
+  late Ticker _ticker;
   final Duration? duration;
   final Duration? reverseDuration;
   final String? debugLabel;
@@ -43,13 +43,15 @@ class AnimationController extends Animation<double>
   AnimationStatus get status => _status;
 
   static void _tickProxy(Duration elapsed) {
-    // This method will be replaced in _tick
+    print('Tick proxy: $elapsed');
   }
 
   void _tick(Duration elapsed) {
     print('Tick: $elapsed');
     _lastElapsed = elapsed;
-    final Duration? animationDuration = _status == AnimationStatus.forward ? duration : reverseDuration ?? duration;
+    final Duration? animationDuration = _status == AnimationStatus.forward
+        ? duration
+        : reverseDuration ?? duration;
     if (animationDuration == null) {
       _isAnimating = false;
       stop();
@@ -57,7 +59,7 @@ class AnimationController extends Animation<double>
     }
 
     double t = elapsed.inMilliseconds / animationDuration.inMilliseconds;
-    
+
     if (t >= 1.0) {
       _isAnimating = false;
       if (_status == AnimationStatus.forward) {
@@ -88,7 +90,7 @@ class AnimationController extends Animation<double>
             : _status == AnimationStatus.forward
                 ? AnimationStatus.forward
                 : AnimationStatus.reverse;
-    
+
     if (newStatus != _status) {
       _status = newStatus;
       notifyStatusListeners(_status);
@@ -105,7 +107,7 @@ class AnimationController extends Animation<double>
 
   void forward({double? from}) {
     _initTicker();
-    print('Forward called'); // Add this debug print
+    print('Forward called');
     if (_isAnimating) {
       stop();
     }
@@ -120,7 +122,7 @@ class AnimationController extends Animation<double>
 
   void reverse({double? from}) {
     _initTicker();
-    print('Reverse called'); // Add this debug print
+    print('Reverse called');
     if (_isAnimating) {
       stop();
     }
@@ -167,7 +169,8 @@ class AnimationController extends Animation<double>
 }
 
 class _AnimationControllerTicker extends Ticker {
-  _AnimationControllerTicker(this.controller, TickerCallback tick, {String? debugLabel})
+  _AnimationControllerTicker(this.controller, TickerCallback tick,
+      {String? debugLabel})
       : super(tick, debugLabel: debugLabel);
 
   final AnimationController controller;

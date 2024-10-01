@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../state/state_flow.dart';
+import 'state_flow.dart';
 
-class StateFlowBuilder extends StatelessWidget {
+class StateFlowBuilder extends StatefulWidget {
   final Widget Function(BuildContext) builder;
   final List<String> listenTo;
   final void Function()? onInit;
@@ -16,47 +16,53 @@ class StateFlowBuilder extends StatelessWidget {
   });
 
   @override
-  StatelessElement createElement() => _StateFlowBuilderElement(this);
-
-  @override
-  Widget build(BuildContext context) => builder(context);
+  _StateFlowBuilderState createState() => _StateFlowBuilderState();
 }
 
-class _StateFlowBuilderElement extends StatelessElement {
-  _StateFlowBuilderElement(StateFlowBuilder widget) : super(widget);
-
+class _StateFlowBuilderState extends State<StateFlowBuilder> {
   @override
-  void mount(Element? parent, Object? newSlot) {
-    super.mount(parent, newSlot);
-    (widget as StateFlowBuilder).onInit?.call();
+  void initState() {
+    super.initState();
+    widget.onInit?.call();
     _addListeners();
   }
 
   @override
-  void unmount() {
-    _removeListeners();
-    (widget as StateFlowBuilder).onDispose?.call();
-    super.unmount();
-  }
-
-  void _addListeners() {
-    for (var key in (widget as StateFlowBuilder).listenTo) {
-      StateFlow().addListener(key, _update);
+  void didUpdateWidget(StateFlowBuilder oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.listenTo != oldWidget.listenTo) {
+      _removeListeners(oldWidget.listenTo);
+      _addListeners();
     }
-  }
-
-  void _removeListeners() {
-    for (var key in (widget as StateFlowBuilder).listenTo) {
-      StateFlow().removeListener(key, _update);
-    }
-  }
-
-  void _update() {
-    markNeedsBuild();
   }
 
   @override
-  Widget build() {
-    return (widget as StateFlowBuilder).builder(this);
+  void dispose() {
+    _removeListeners(widget.listenTo);
+    widget.onDispose?.call();
+    super.dispose();
+  }
+
+  void _addListeners() {
+    for (var key in widget.listenTo) {
+      StateFlow().addListener(key, _handleStateChange);
+    }
+  }
+
+  void _removeListeners(List<String> keys) {
+    for (var key in keys) {
+      StateFlow().removeListener(key, _handleStateChange);
+    }
+  }
+
+  void _handleStateChange() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context);
   }
 }

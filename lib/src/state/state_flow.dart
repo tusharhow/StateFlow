@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'dart:collection';
 
 class StateFlow {
   static final StateFlow instance = StateFlow._internal();
@@ -8,7 +9,7 @@ class StateFlow {
   StateFlow._internal();
 
   final Map<String, dynamic> _state = {};
-  final Map<String, Set<VoidCallback>> _listeners = {};
+  final Map<String, LinkedHashSet<VoidCallback>> _listeners = {};
 
   T? get<T>(String key) => _state[key] as T?;
 
@@ -18,7 +19,7 @@ class StateFlow {
   }
 
   void addListener(String key, VoidCallback listener) {
-    _listeners.putIfAbsent(key, () => {}).add(listener);
+    _listeners.putIfAbsent(key, () => LinkedHashSet<VoidCallback>()).add(listener);
   }
 
   void removeListener(String key, VoidCallback listener) {

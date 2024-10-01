@@ -21,8 +21,8 @@ class StateFlowApp extends StatelessWidget {
   }
 
   void _registerController(StateFlowController Function() factory) {
-    final controller = factory();
-    globalServiceLocator.register(controller.runtimeType, () {
+    globalServiceLocator.register(factory().runtimeType, () {
+      final controller = factory();
       controller.onInit();
       return controller;
     });

@@ -5,14 +5,15 @@ import 'dart:convert';
 void main() {
   runApp(StateFlowApp(
     controllers: [
-      () => TodoController(),
       () => CounterController(),
+      () => TodoController(),
     ],
     child: MyApp(),
   ));
 }
 
 class MyApp extends StatelessWidget {
+ 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -30,12 +31,6 @@ class CounterController extends StateFlowController {
 
   void increment() {
     counter.value++;
-  }
-
-  final toggleSwitch = take(false);
-
-  void toggleSwitchhhhhh() {
-    toggleSwitch.value = !toggleSwitch.value;
   }
 }
 
@@ -107,7 +102,7 @@ class TestApp extends StateFlowWidget {
             WidgetStateValueBuilder<List<Todo>>(
               state: todoController.todos,
               dataBuilder: (data) {
-                if (data == null || data.isEmpty) {
+                if (data.isEmpty) {
                   return Text('No todos');
                 }
                 return Expanded(
@@ -116,12 +111,6 @@ class TestApp extends StateFlowWidget {
                     itemBuilder: (context, index) {
                       return ListTile(
                         title: Text(data[index].title),
-                        leading: Checkbox(
-                          value: data[index].completed,
-                          onChanged: (_) {
-                          
-                          }, // Add toggle functionality if needed
-                        ),
                       );
                     },
                   ),
@@ -141,5 +130,17 @@ class TestApp extends StateFlowWidget {
         ),
       ),
     );
+  }
+}
+
+
+
+class TestAppNew extends StatelessWidget {
+  const TestAppNew({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final animationController = takeAnimationController();
+    return const Placeholder();
   }
 }
