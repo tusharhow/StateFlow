@@ -5,14 +5,12 @@ import '../core/state_flow_controller.dart';
 class StateFlowApp extends StatelessWidget {
   final Widget child;
   final List<StateFlowController Function()> controllers;
-  final ServiceLocator serviceLocator;
 
   StateFlowApp({
     super.key,
     required this.child,
     required this.controllers,
-    ServiceLocator? serviceLocator,
-  }) : serviceLocator = serviceLocator ?? ServiceLocator() {
+  }) {
     _setupDependencies();
   }
 
@@ -24,7 +22,7 @@ class StateFlowApp extends StatelessWidget {
 
   void _registerController(StateFlowController Function() factory) {
     final controller = factory();
-    serviceLocator.register(controller.runtimeType, () {
+    globalServiceLocator.register(controller.runtimeType, () {
       controller.onInit();
       return controller;
     });
@@ -33,7 +31,7 @@ class StateFlowApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _StateFlowInheritedWidget(
-      serviceLocator: serviceLocator,
+      serviceLocator: globalServiceLocator,
       child: child,
     );
   }
@@ -43,7 +41,6 @@ class _StateFlowInheritedWidget extends InheritedWidget {
   final ServiceLocator serviceLocator;
 
   const _StateFlowInheritedWidget({
-    super.key,
     required this.serviceLocator,
     required Widget child,
   }) : super(child: child);
@@ -61,7 +58,7 @@ class _StateFlowInheritedWidget extends InheritedWidget {
 }
 
 extension StateFlowContextExtension on BuildContext {
-  T listen<T>() {
-    return _StateFlowInheritedWidget.of(this).serviceLocator.get<T>();
+  T listen<T>(Type type) {
+    return _StateFlowInheritedWidget.of(this).serviceLocator.get(type);
   }
 }

@@ -1,37 +1,16 @@
-class StateFlowController {
-  bool _isInitialized = false;
-  bool _isDisposed = false;
+import '../state/state_value.dart';
 
-  /// Called when the controller is initialized
-  void onInit() {
-    if (_isInitialized) return;
-    _isInitialized = true;
-    // Notify listeners or trigger state update
-    _notifyStateChange();
+abstract class StateFlowController {
+  final Map<String, StateValue> _states = {};
+
+  StateValue<T> take<T>(T initialValue) {
+    final key = '${runtimeType}_${_states.length}';
+    final stateValue = StateValue<T>(key, initialValue);
+    _states[key] = stateValue;
+    return stateValue;
   }
 
-  /// Called when the controller is ready to be used
-  void onReady() {
-    assert(_isInitialized,
-        'Controller must be initialized before calling onReady');
-    // Perform any ready state actions
-    _notifyStateChange();
-  }
+  void onInit() {}
 
-  /// Called when the controller is being disposed
-  void onDispose() {
-    if (_isDisposed) return;
-    _isDisposed = true;
-    // Notify listeners or trigger state update
-    _notifyStateChange();
-  }
-
-  /// Checks if the controller has been initialized
-  bool get isInitialized => _isInitialized;
-
-  /// Checks if the controller has been disposed
-  bool get isDisposed => _isDisposed;
-
-  /// Notifies listeners of state changes
-  void _notifyStateChange() {}
+  Map<String, StateValue> get states => _states;
 }

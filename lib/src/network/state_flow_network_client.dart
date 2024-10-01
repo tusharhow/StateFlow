@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'multipart_file.dart';
 
-
 enum HttpMethod { GET, POST, PUT, DELETE, PATCH }
 
 class StateFlowResponse {

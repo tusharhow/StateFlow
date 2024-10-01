@@ -5,11 +5,17 @@ class ServiceLocator {
     _factories[type] = factory;
   }
 
-  T get<T>() {
-    final factory = _factories[T];
+  dynamic get(Type type) {
+    final factory = _factories[type];
     if (factory == null) {
-      throw Exception('Dependency $T not registered');
+      throw Exception('Dependency $type not registered');
     }
-    return factory() as T;
+    return factory();
   }
+}
+
+final globalServiceLocator = ServiceLocator();
+
+dynamic listen(Type type) {
+  return globalServiceLocator.get(type);
 }

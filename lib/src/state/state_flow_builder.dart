@@ -8,7 +8,7 @@ class StateFlowBuilder extends StatelessWidget {
   final void Function()? onDispose;
 
   const StateFlowBuilder({
-    super.key,  
+    super.key,
     required this.builder,
     this.listenTo = const [],
     this.onInit,

@@ -2,9 +2,9 @@ import 'package:flutter/foundation.dart';
 
 class StateFlow {
   static final StateFlow instance = StateFlow._internal();
-  
+
   factory StateFlow() => instance;
-  
+
   StateFlow._internal();
 
   final Map<String, dynamic> _state = {};

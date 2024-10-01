@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
-import '../state/state_value.dart';
-import 'state_flow_builder.dart';
+import 'package:state_flow/state_flow.dart';
 
 class StateValueBuilder<T> extends StatelessWidget {
   final StateValue<T> value;
-  final Widget Function(BuildContext, T?) builder;
-  final Widget Function(BuildContext, Object)? errorBuilder;
-  final Widget Function(BuildContext)? loadingBuilder;
+  final Widget Function(T) builder;
 
   const StateValueBuilder({
     super.key,
     required this.value,
     required this.builder,
-    this.errorBuilder,
-    this.loadingBuilder,
   });
 
   @override
@@ -21,30 +16,24 @@ class StateValueBuilder<T> extends StatelessWidget {
     return StateFlowBuilder(
       listenTo: [value.key],
       builder: (context) {
-        if (value.isLoading && loadingBuilder != null) {
-          return loadingBuilder!(context);
-        } else if (value.error != null && errorBuilder != null) {
-          return errorBuilder!(context, value.error!);
-        } else {
-          return builder(context, value.value);
-        }
+        return builder(value.value);
       },
     );
   }
 }
 
-class WidgetStateValueBuilder extends StatelessWidget {
-  final StateValue state;
-  final Widget Function(BuildContext, dynamic) builder;
-  final Widget Function(BuildContext, Object)? errorBuilder;
-  final Widget Function(BuildContext)? loadingBuilder;
+class WidgetStateValueBuilder<T> extends StatelessWidget {
+  final StateValue<T> state;
+  final Widget Function(T) dataBuilder;
+  final Widget Function(Object) errorBuilder;
+  final Widget Function() loadingBuilder;
 
   const WidgetStateValueBuilder({
     super.key,
     required this.state,
-    required this.builder,
-    this.errorBuilder,
-    this.loadingBuilder,
+    required this.dataBuilder,
+    required this.errorBuilder,
+    required this.loadingBuilder,
   });
 
   @override
@@ -52,12 +41,12 @@ class WidgetStateValueBuilder extends StatelessWidget {
     return StateFlowBuilder(
       listenTo: [state.key],
       builder: (context) {
-        if (state.isLoading && loadingBuilder != null) {
-          return loadingBuilder!(context);
-        } else if (state.error != null && errorBuilder != null) {
-          return errorBuilder!(context, state.error!);
+        if (state.isLoading) {
+          return loadingBuilder();
+        } else if (state.error != null) {
+          return errorBuilder(state.error!);
         } else {
-          return builder(context, state.value);
+          return dataBuilder(state.value);
         }
       },
     );

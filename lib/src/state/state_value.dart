@@ -35,6 +35,18 @@ class StateValue<T> {
     StateFlow().notifyListeners(key);
   }
 
+  void stopLoading() {
+    _isLoading = false;
+    StateFlow().notifyListeners(key);
+  }
+
+  void setLoaded(T newValue) {
+    _value = newValue;
+    _isLoading = false;
+    _error = null;
+    StateFlow().notifyListeners(key);
+  }
+
   void dispose() {
     StateFlow().removeListener(key, _update);
   }
@@ -45,5 +57,6 @@ class StateValue<T> {
 }
 
 StateValue<T> take<T>(T initialValue) {
-  return StateValue<T>('state_${DateTime.now().millisecondsSinceEpoch}', initialValue);
+  return StateValue<T>(
+      'state_${DateTime.now().millisecondsSinceEpoch}', initialValue);
 }
