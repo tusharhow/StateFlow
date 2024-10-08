@@ -10,5 +10,8 @@ Initial Release
 * Dependency not registering issues are fixed.
 * Initialization and disposal of StateFlowWidget is now handled using onInit and onDispose.
 * onInit and onDispose issues are fixed.
-* No more # in the URL.
 * Readme.md updated.
+
+## 0.0.3
+
+* App crash issue is fixed.

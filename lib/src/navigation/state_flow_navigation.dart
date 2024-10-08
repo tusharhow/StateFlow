@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'dart:js' as js;
 
 // Public facade class
 class StateFlowNavigation {
@@ -46,69 +44,9 @@ class _FlowNavigator {
 
   static final List<String> _history = [];
 
-  static bool _isInitialized = false;
-
   static const int _maxHistorySize = 100;
 
-  static void _initializeWebRouting() {
-    if (kIsWeb && !_isInitialized) {
-      _setupPathBasedRouting();
-      _isInitialized = true;
-    }
-  }
-
-  static void _setupPathBasedRouting() {
-    js.context.callMethod('eval', [
-      '''
-      (function() {
-        function removeHash() {
-          var uri = window.location.toString();
-          if (uri.indexOf("#") > 0) {
-            var clean_uri = uri.substring(0, uri.indexOf("#"));
-            window.history.replaceState({}, document.title, clean_uri);
-          }
-        }
-
-        var pushState = history.pushState;
-        history.pushState = function() {
-          var result = pushState.apply(this, arguments);
-          removeHash();
-          return result;
-        };
-
-        var replaceState = history.replaceState;
-        history.replaceState = function() {
-          var result = replaceState.apply(this, arguments);
-          removeHash();
-          return result;
-        };
-
-        window.addEventListener('hashchange', removeHash);
-        window.addEventListener('load', removeHash);
-
-        window.addEventListener('popstate', function(event) {
-          if (event.state !== null) {
-            // Handle browser back/forward navigation
-            // You may want to update your app's state here
-          }
-        });
-      })();
-    '''
-    ]);
-  }
-
-  static void _updateBrowserUrl(String path) {
-    if (kIsWeb) {
-      js.context.callMethod('eval', [
-        '''
-        history.pushState(null, '', '$path');
-      '''
-      ]);
-    }
-  }
-
   static NavigatorState get _navigator {
-    _initializeWebRouting();
     final state = navigatorKey.currentState;
     if (state == null) {
       throw StateError(
@@ -144,7 +82,6 @@ class _FlowNavigator {
 
   static Future<T?> to<T extends Object?>(dynamic route,
       {Object? arguments}) async {
-    _initializeWebRouting();
     try {
       if (route is String) {
         return await _handleStringRoute<T>(route, arguments);
@@ -162,7 +99,6 @@ class _FlowNavigator {
   static Future<T?> _handleStringRoute<T>(
       String route, Object? arguments) async {
     final path = route.startsWith('/') ? route : '/$route';
-    _updateBrowserUrl(path);
     final result = await _navigator.pushNamed(path, arguments: arguments);
     _addToHistory(path);
     return result as T?;
@@ -170,7 +106,6 @@ class _FlowNavigator {
 
   static Future<T?> _handleWidgetRoute<T>(Widget route) async {
     final routeName = '/${route.runtimeType.toString()}';
-    _updateBrowserUrl(routeName);
     final result = await _navigator.push<T>(MaterialPageRoute(
         builder: (_) => route, settings: RouteSettings(name: routeName)));
     _addToHistory(routeName);
@@ -184,10 +119,8 @@ class _FlowNavigator {
 
   static Future<T?> off<T extends Object?>(dynamic route,
       {Object? arguments}) async {
-    _initializeWebRouting();
     if (route is String) {
       final path = route.startsWith('/') ? route : '/$route';
-      _updateBrowserUrl(path);
       final result =
           await _navigator.pushReplacementNamed(path, arguments: arguments);
       if (_history.isNotEmpty) {
@@ -197,7 +130,6 @@ class _FlowNavigator {
       return result as T?;
     } else if (route is Widget) {
       final routeName = '/${route.runtimeType.toString()}';
-      _updateBrowserUrl(routeName);
       final result = await _navigator.pushReplacement<T, dynamic>(
           MaterialPageRoute(
               builder: (_) => route, settings: RouteSettings(name: routeName)));
@@ -213,10 +145,8 @@ class _FlowNavigator {
 
   static Future<T?> offAll<T extends Object?>(dynamic route,
       {Object? arguments}) async {
-    _initializeWebRouting();
     if (route is String) {
       final path = route.startsWith('/') ? route : '/$route';
-      _updateBrowserUrl(path);
       final result = await _navigator
           .pushNamedAndRemoveUntil(path, (r) => false, arguments: arguments);
       _history.clear();
@@ -224,7 +154,6 @@ class _FlowNavigator {
       return result as T?;
     } else if (route is Widget) {
       final routeName = '/${route.runtimeType.toString()}';
-      _updateBrowserUrl(routeName);
       final result = await _navigator.pushAndRemoveUntil<T>(
           MaterialPageRoute(
               builder: (_) => route, settings: RouteSettings(name: routeName)),
@@ -242,13 +171,7 @@ class _FlowNavigator {
       if (_history.length > 1) {
         // Remove the current route from history
         _history.removeLast();
-        // Get the previous route
-        String previousRoute = _history.last;
         // Update the URL immediately
-        _updateBrowserUrl(previousRoute);
-      } else {
-        // If we're at the root, ensure we update to '/'
-        _updateBrowserUrl('/');
       }
       // Perform the actual navigation
       _navigator.pop(result);
