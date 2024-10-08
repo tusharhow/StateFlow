@@ -19,7 +19,7 @@ Add the dependency to your `pubspec.yaml` file:
 
 ~~~yaml
 dependencies:
-  state_flow: ^0.0.1
+  state_flow: ^0.0.2
 ~~~
 
 Wrap your app with `StateFlowApp` to enable the StateFlow functionality. Make sure to pass the controllers you want to use in the `controllers` parameter.
@@ -240,8 +240,6 @@ For going back to the previous screen, you can use the `StateFlow.back` method.
 StateFlow.back();
 ```
 
-// off offAll maybePop currentRoute  getHistory onGenerateRoute
-
 ```dart
 StateFlow.off(DetailScreen());
 StateFlow.offAll(DetailScreen());
@@ -267,7 +265,6 @@ class AppRoutes {
 
 Modify the MaterialApp like this use `onGenerateRoute: (settings) => StateFlow.onGenerateRoute(settings)`, ` routes: AppRoutes.routes` and `navigatorKey: StateFlow.navigatorKey`
 
-```dart
 ```dart
 class MyApp extends StatelessWidget {
   @override
