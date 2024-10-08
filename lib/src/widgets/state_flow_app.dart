@@ -3,29 +3,24 @@ import '../core/service_locator.dart';
 import '../core/state_flow_controller.dart';
 
 class StateFlowApp extends StatelessWidget {
+  final List<Function> controllers;
   final Widget child;
-  final List<StateFlowController Function()> controllers;
 
   StateFlowApp({
     super.key,
-    required this.child,
     required this.controllers,
+    required this.child,
   }) {
-    _setupDependencies();
+    _registerControllers();
   }
 
-  void _setupDependencies() {
-    for (final factory in controllers) {
-      _registerController(factory);
+  void _registerControllers() {
+    for (var controllerFactory in controllers) {
+      final controller = controllerFactory();
+      globalServiceLocator.register(() => controller,
+          type: controller.runtimeType);
+      (controller as StateFlowController).onInit();
     }
-  }
-
-  void _registerController(StateFlowController Function() factory) {
-    globalServiceLocator.register(factory().runtimeType, () {
-      final controller = factory();
-      controller.onInit();
-      return controller;
-    });
   }
 
   @override
@@ -45,20 +40,21 @@ class _StateFlowInheritedWidget extends InheritedWidget {
     required Widget child,
   }) : super(child: child);
 
+  @override
+  bool updateShouldNotify(_StateFlowInheritedWidget oldWidget) {
+    return serviceLocator != oldWidget.serviceLocator;
+  }
+
   static _StateFlowInheritedWidget of(BuildContext context) {
     final result =
         context.dependOnInheritedWidgetOfExactType<_StateFlowInheritedWidget>();
-    assert(result != null, 'No StateFlowInheritedWidget found in context');
+    assert(result != null, 'No _StateFlowInheritedWidget found in context');
     return result!;
   }
-
-  @override
-  bool updateShouldNotify(_StateFlowInheritedWidget old) =>
-      serviceLocator != old.serviceLocator;
 }
 
 extension StateFlowContextExtension on BuildContext {
   T listen<T>(Type type) {
-    return _StateFlowInheritedWidget.of(this).serviceLocator.get(type);
+    return _StateFlowInheritedWidget.of(this).serviceLocator.get<T>();
   }
 }

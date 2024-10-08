@@ -1,40 +1,33 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 abstract class StateFlowWidget extends StatelessWidget {
-  final void Function(BuildContext context)? onInit;
-  final VoidCallback? onDispose;
+  const StateFlowWidget({super.key});
 
-  const StateFlowWidget({
-    super.key,
-    this.onInit,
-    this.onDispose,
-  });
+  @protected
+  void onInit(BuildContext? context) {}
+
+  @protected
+  void onDispose() {}
 
   @override
-  StatelessElement createElement() => _LifecycleElement(this);
+  StatelessElement createElement() => _StateFlowElement(this);
 
   @override
   Widget build(BuildContext context);
 }
 
-class _LifecycleElement extends StatelessElement {
-  _LifecycleElement(StateFlowWidget widget) : super(widget);
+class _StateFlowElement extends StatelessElement {
+  _StateFlowElement(StateFlowWidget widget) : super(widget);
 
   @override
   void mount(Element? parent, Object? newSlot) {
     super.mount(parent, newSlot);
-    final widget = this.widget as StateFlowWidget;
-    if (widget.onInit != null) {
-      widget.onInit!(this);
-    }
+    (widget as StateFlowWidget).onInit(this);
   }
 
   @override
   void unmount() {
-    final widget = this.widget as StateFlowWidget;
-    if (widget.onDispose != null) {
-      widget.onDispose!();
-    }
+    (widget as StateFlowWidget).onDispose();
     super.unmount();
   }
 }

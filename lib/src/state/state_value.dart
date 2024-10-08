@@ -44,6 +44,10 @@ class StateValue<T> {
     }
   }
 
+  void dispose() {
+    StateFlow().removeListener(key, _update);
+  }
+
   void setError(Object error) {
     _error = error;
     _isLoading = false;
@@ -66,10 +70,6 @@ class StateValue<T> {
     _isLoading = false;
     _error = null;
     StateFlow().notifyListeners(key);
-  }
-
-  void dispose() {
-    StateFlow().removeListener(key, _update);
   }
 
   void _update() {

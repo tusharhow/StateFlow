@@ -90,7 +90,7 @@ StateFlow provides networking features using the `StateFlowClient`.
 At first you need to create a StateFlowClient. This is used to send requests to the server.
 
 ```dart
-final client = StateFlowClient(baseUrl: 'https://jsonplaceholder.typicode.com');
+final client = StateFlowClient(baseUrl: 'example.com');
 
 final response = await client.sendRequest('/todos', HttpMethod.GET);
 ```
@@ -194,18 +194,104 @@ If you want to use initState and disposeState to be called, you can use StateFlo
 
 ```dart
 class TestApp extends StateFlowWidget {
-  TestApp({super.key}) : super(
-    onInit: (context) {
-      print('Initializing TestApp');
-      
-    },
-    onDispose: () {
-      print('Disposing TestApp');
-    },
-  );
+  TestApp({super.key}) : super();
+   @override
+  void onInit(context) {
+    print('TestApp onInit');
+  }
+
+  @override
+  void onDispose() {
+    print('TestApp onDispose');
+  }
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
   }
 }
 ```
+
+### StateFlow Navigation
+
+For enabling navigation in your app, you can use the `navigatorKey: StateFlow.navigatorKey` in your MaterialApp.
+
+```dart
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'StateFlow Demo',
+      navigatorKey: StateFlow.navigatorKey,
+      theme: ThemeData(primarySwatch: Colors.blue),
+    );
+  }
+}
+```
+
+Use the `StateFlow.to` method to navigate to a new screen.
+
+```dart
+StateFlow.to(DetailScreen());
+```
+
+For going back to the previous screen, you can use the `StateFlow.back` method.
+
+```dart
+StateFlow.back();
+```
+
+// off offAll maybePop currentRoute  getHistory onGenerateRoute
+
+```dart
+StateFlow.off(DetailScreen());
+StateFlow.offAll(DetailScreen());
+StateFlow.maybePop();
+StateFlow.currentRoute();
+StateFlow.getHistory();
+ onGenerateRoute: (settings) => StateFlow.onGenerateRoute(settings),
+```
+
+#### You can create your App Routes like this
+
+```dart
+class AppRoutes {
+  static const String home = '/';
+  static const String second = '/second';
+
+  static final routes = {
+    home: (context) => HomeScreen(),
+    second: (context) => SecondScreen(),
+  };
+}
+```
+
+Modify the MaterialApp like this use `onGenerateRoute: (settings) => StateFlow.onGenerateRoute(settings)`, ` routes: AppRoutes.routes` and `navigatorKey: StateFlow.navigatorKey`
+
+```dart
+```dart
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'StateFlow Demo',
+      navigatorKey: StateFlow.navigatorKey,
+      onGenerateRoute: (settings) => StateFlow.onGenerateRoute(settings),
+      theme: ThemeData(primarySwatch: Colors.blue),
+      routes: AppRoutes.routes,
+    );
+  }
+}
+```
+
+Now You can use with your routes
+
+```dart
+onPressed: () => StateFlow.to('/second')
+onPressed: () => StateFlow.to(AppRoutes.second)
+```
+
+
+
+
+
+

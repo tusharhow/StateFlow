@@ -1,21 +1,35 @@
 class ServiceLocator {
   final Map<Type, dynamic Function()> _factories = {};
 
-  void register(Type type, dynamic Function() factory) {
-    _factories[type] = factory;
+  void register<T>(T Function() factory, {Type? type}) {
+    _factories[type ?? T] = factory;
   }
 
-  dynamic get(Type type) {
+  T get<T>() {
+    return _getByType<T>(T);
+  }
+
+  T getByType<T>(Type type) {
+    return _getByType<T>(type);
+  }
+
+  T _getByType<T>(Type type) {
     final factory = _factories[type];
     if (factory == null) {
-      throw Exception('Dependency $type not registered');
+      throw Exception(
+          'Dependency ${type.toString()} not registered. Registered types: ${_factories.keys}');
     }
-    return factory();
+    return factory() as T;
+  }
+
+  bool isRegistered<T>() {
+    return _factories.containsKey(T);
   }
 }
 
 final globalServiceLocator = ServiceLocator();
 
-dynamic listen(Type type) {
-  return globalServiceLocator.get(type);
+T listen<T>([Type? type]) {
+  type ??= T;
+  return globalServiceLocator.getByType<T>(type);
 }

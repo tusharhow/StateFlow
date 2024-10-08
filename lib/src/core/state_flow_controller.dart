@@ -5,12 +5,21 @@ abstract class StateFlowController {
 
   StateValue<T> take<T>(T initialValue) {
     final key = '${runtimeType}_${_states.length}';
-    final stateValue = StateValue<T>(key, initialValue);
-    _states[key] = stateValue;
-    return stateValue;
+    return _states.putIfAbsent(key, () => StateValue<T>(key, initialValue))
+        as StateValue<T>;
   }
 
   void onInit() {}
+
+  void dispose() {
+    onDispose();
+    for (var state in _states.values) {
+      state.dispose();
+    }
+    _states.clear();
+  }
+
+  void onDispose() {}
 
   Map<String, StateValue> get states => _states;
 }
