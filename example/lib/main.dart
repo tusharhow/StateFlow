@@ -147,7 +147,12 @@ class FifthScreen extends StatelessWidget {
 class CounterController extends StateFlowController {
   late final StateValue<int> count;
   late final StateValue<String> status;
+  int count23 = 2;
 
+
+add (){
+  count23++;
+}
   @override
   void onInit() {
     count = take(2);
@@ -238,7 +243,7 @@ class TestApp extends StateFlowWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          counterController.increment();
+          counterController.add();
           print('Pressed');
         },
         child: Icon(Icons.refresh),
@@ -269,23 +274,11 @@ class TestApp extends StateFlowWidget {
             ),
             SizedBox(height: 20),
             StateValueBuilder(
-              values: [
-                counterController.count,
-                false,
-                'Hello',
-                false,
-              ],
-              builder: (values) {
-                var [count, isActive, greeting, otherValue] = values;
+              value: counterController.count23,
+              builder: (count) {
+                return Text('Counter: $count');
                 
-                return Column(
-                  children: [
-                    Text('Counter: $count'),
-                    Icon(isActive ? Icons.check : Icons.close),
-                    Text(greeting),
-                    Text('Other value: $otherValue'),
-                  ],
-                );
+                
               },
             ),
             SizedBox(height: 20),

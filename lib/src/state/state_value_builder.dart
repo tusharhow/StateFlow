@@ -6,32 +6,28 @@ class StateValues {
   const StateValues(this._values);
 }
 
-class StateValueBuilder extends StatelessWidget {
-  final List<dynamic> values;
-  final Widget Function(List<dynamic>) builder;
+class StateValueBuilder<T> extends StatelessWidget {
+  final dynamic value;
+  final Widget Function(T) builder;
 
   const StateValueBuilder({
     super.key,
-    required this.values,
+    required this.value,
     required this.builder,
   });
 
   @override
   Widget build(BuildContext context) {
-    List<String> listenToKeys = values
-        .whereType<StateValue>()
-        .map((stateValue) => stateValue.key)
-        .toList();
-
-    return StateFlowBuilder(
-      listenTo: listenToKeys,
-      builder: (context) {
-        List<dynamic> currentValues = values.map((value) {
-          return value is StateValue ? value.value : value;
-        }).toList();
-        return builder(currentValues);
-      },
-    );
+    if (value is StateValue<T>) {
+      return StateFlowBuilder(
+        listenTo: [value.key],
+        builder: (context) => builder(value.value as T),
+      );
+    } else if (value is T) {
+      return builder(value);
+    } else {
+      throw ArgumentError('Value must be of type StateValue<T> or T');
+    }
   }
 }
 

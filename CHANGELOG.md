@@ -22,3 +22,7 @@ Initial Release
 * StateValueBuilder issues are fixed.
 * Example app updated.
 * Readme.md updated.
+
+## 0.0.5
+
+* StateValueBuilder issues are fixed.
