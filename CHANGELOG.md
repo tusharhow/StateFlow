@@ -26,3 +26,8 @@ Initial Release
 ## 0.0.5
 
 * StateValueBuilder issues are fixed.
+
+## 0.0.6
+
+* StateValueBuilder data type issue fixed.
+

@@ -19,7 +19,7 @@ Add the dependency to your `pubspec.yaml` file:
 
 ~~~yaml
 dependencies:
-  state_flow: ^0.0.5
+  state_flow: ^0.0.6
 ~~~
 
 Wrap your app with `StateFlowApp` to enable the StateFlow functionality. Make sure to pass the controllers you want to use in the `controllers` parameter.

@@ -1,6 +1,6 @@
 name: state_flow
 description: "StateFlow provides a simple and efficient way to manage state in your Flutter applications."
-version: 0.0.5
+version: 0.0.6
 homepage: https://github.com/tusharhow/StateFlow
 
 environment:

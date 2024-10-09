@@ -23,7 +23,7 @@ class StateValueBuilder<T> extends StatelessWidget {
         listenTo: [value.key],
         builder: (context) => builder(value.value as T),
       );
-    } else if (value is T) {
+    } else if (value) {
       return builder(value);
     } else {
       throw ArgumentError('Value must be of type StateValue<T> or T');
