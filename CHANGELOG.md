@@ -15,3 +15,10 @@ Initial Release
 ## 0.0.3
 
 * App crash issue is fixed.
+
+## 0.0.4
+
+* StateValueBuilder accepts multiple values.
+* StateValueBuilder issues are fixed.
+* Example app updated.
+* Readme.md updated.

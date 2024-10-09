@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-  import 'package:state_flow/state_flow.dart';
+import 'package:state_flow/state_flow.dart';
 import 'dart:convert';
 
 void main() {
@@ -30,7 +30,7 @@ class AppRoutes {
   static const String second = '/second';
 
   static final routes = {
-    home: (context) => HomeScreen(),
+    home: (context) => TestApp(),
     second: (context) => SecondScreen(),
   };
 }
@@ -45,9 +45,8 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              child: Text('Go to Second Screen'),
-              onPressed: () => StateFlow.to('/second')
-            ),
+                child: Text('Go to Second Screen'),
+                onPressed: () => StateFlow.to('/second')),
             ElevatedButton(
               child: Text('Replace with Third Screen'),
               onPressed: () => StateFlow.off('/third'),
@@ -107,12 +106,11 @@ class SecondScreen extends StatelessWidget {
 }
 
 class Hi extends StateFlowWidget {
- const Hi({super.key}) : super();
+  const Hi({super.key}) : super();
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
   }
- 
 }
 
 // THIRD, FOURTH, FIFTH SCREENS
@@ -124,7 +122,7 @@ class ThirdScreen extends StatelessWidget {
       body: Center(child: Text('Third Screen')),
     );
   }
-} 
+}
 
 class FourthScreen extends StatelessWidget {
   @override
@@ -235,7 +233,7 @@ class TestApp extends StateFlowWidget {
   @override
   Widget build(BuildContext context) {
     final todoController = listen(TodoController);
-    final counterController = listen(CounterController);
+    final CounterController counterController = listen(CounterController);
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -271,9 +269,24 @@ class TestApp extends StateFlowWidget {
             ),
             SizedBox(height: 20),
             StateValueBuilder(
-              value: counterController.count,
-              builder: (value) =>
-                  Text('Counter: $value', style: TextStyle(fontSize: 18)),
+              values: [
+                counterController.count,
+                false,
+                'Hello',
+                false,
+              ],
+              builder: (values) {
+                var [count, isActive, greeting, otherValue] = values;
+                
+                return Column(
+                  children: [
+                    Text('Counter: $count'),
+                    Icon(isActive ? Icons.check : Icons.close),
+                    Text(greeting),
+                    Text('Other value: $otherValue'),
+                  ],
+                );
+              },
             ),
             SizedBox(height: 20),
           ],

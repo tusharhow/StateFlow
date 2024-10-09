@@ -1,25 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:state_flow/state_flow.dart';
 
-class StateValueBuilder<T> extends StatelessWidget {
-  final StateValue<T> value;
-  final Widget Function(T) builder;
+class StateValues {
+  final List<dynamic> _values;
+  const StateValues(this._values);
+}
+
+class StateValueBuilder extends StatelessWidget {
+  final List<dynamic> values;
+  final Widget Function(List<dynamic>) builder;
 
   const StateValueBuilder({
     super.key,
-    required this.value,
+    required this.values,
     required this.builder,
   });
 
   @override
   Widget build(BuildContext context) {
+    List<String> listenToKeys = values
+        .whereType<StateValue>()
+        .map((stateValue) => stateValue.key)
+        .toList();
+
     return StateFlowBuilder(
-      listenTo: [value.key],
+      listenTo: listenToKeys,
       builder: (context) {
-        return builder(value.value);
+        List<dynamic> currentValues = values.map((value) {
+          return value is StateValue ? value.value : value;
+        }).toList();
+        return builder(currentValues);
       },
     );
   }
+}
+
+// Helper function to create StateValues
+StateValues $([
+  dynamic a,
+  dynamic b,
+  dynamic c,
+  dynamic d,
+  dynamic e,
+  dynamic f,
+  dynamic g,
+  dynamic h,
+  dynamic i,
+  dynamic j,
+]) {
+  return StateValues([a, b, c, d, e, f, g, h, i, j]
+      .where((element) => element != null)
+      .toList());
 }
 
 class WidgetStateValueBuilder<T> extends StatelessWidget {

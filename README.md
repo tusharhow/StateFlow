@@ -175,6 +175,31 @@ final todoController = listen(TodoController);
 ```
 
 
+You can pass multiple values to the `StateValueBuilder` by using the `StateValueBuilder`.
+
+```dart
+    StateValueBuilder(
+              values: [
+                counterController.count,
+                false,
+                'Hello',
+                false,
+              ],
+              builder: (values) {
+                var [count, isActive, greeting, otherValue] = values;
+                
+                return Column(
+                  children: [
+                    Text('Counter: $count'),
+                    Icon(isActive ? Icons.check : Icons.close),
+                    Text(greeting),
+                    Text('Other value: $otherValue'),
+                  ],
+                );
+              },
+            ),
+  ```
+
 ### Animation Controller
 If you want to use the animation controller without StateFulWidget, you can use the `takeAnimationController` function.
 ```dart
