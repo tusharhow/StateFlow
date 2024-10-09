@@ -274,9 +274,9 @@ class TestApp extends StateFlowWidget {
             ),
             SizedBox(height: 20),
             StateValueBuilder(
-              value: counterController.count23,
+              value: counterController.count,
               builder: (count) {
-                return Text('Counter: $count');
+                return Text(count.toString());
                 
                 
               },

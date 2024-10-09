@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:state_flow/state_flow.dart';
 
-class StateValues {
-  final List<dynamic> _values;
-  const StateValues(this._values);
-}
 
 class StateValueBuilder<T> extends StatelessWidget {
-  final dynamic value;
+  final StateValue<T> value;
   final Widget Function(T) builder;
 
   const StateValueBuilder({
@@ -18,36 +14,18 @@ class StateValueBuilder<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (value is StateValue<T>) {
-      return StateFlowBuilder(
-        listenTo: [value.key],
-        builder: (context) => builder(value.value as T),
-      );
-    } else if (value) {
-      return builder(value);
-    } else {
-      throw ArgumentError('Value must be of type StateValue<T> or T');
-    }
+    return StateFlowBuilder(
+      listenTo: [value.key],
+      builder: (context) {
+        return builder(value.value);
+      },
+    );
   }
 }
 
-// Helper function to create StateValues
-StateValues $([
-  dynamic a,
-  dynamic b,
-  dynamic c,
-  dynamic d,
-  dynamic e,
-  dynamic f,
-  dynamic g,
-  dynamic h,
-  dynamic i,
-  dynamic j,
-]) {
-  return StateValues([a, b, c, d, e, f, g, h, i, j]
-      .where((element) => element != null)
-      .toList());
-}
+
+
+
 
 class WidgetStateValueBuilder<T> extends StatelessWidget {
   final StateValue<T> state;

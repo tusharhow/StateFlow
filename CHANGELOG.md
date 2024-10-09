@@ -31,3 +31,11 @@ Initial Release
 
 * StateValueBuilder data type issue fixed.
 
+## 0.0.7
+
+* Bug fixes.
+
+## 0.0.8
+
+* StateValueBuilder data type issue fixed.
+
